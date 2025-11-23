@@ -18,11 +18,14 @@ main: $(SRC)/*.c
 
 # simple command for easier debugging
 .PHONY: run_client_debug
-run_client_debug: $(BIN)/download
+run_client_debug: main
+	@echo ""
 	@echo "Testing 1st case"
 	./$(BIN)/download $(URL1)
+	@echo ""
 	@echo "Testing 2nd case"
 	./$(BIN)/download $(URL2)
+	@echo ""
 	@echo "Testing 3rd case"
 	./$(BIN)/download $(URL3)
 

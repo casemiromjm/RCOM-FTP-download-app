@@ -6,8 +6,11 @@
 typedef struct Url {
     char user[MAX_LENGTH];
     char password[MAX_LENGTH];
-    char host[MAX_LENGTH];
+    char hostname[MAX_LENGTH];
     char resource[MAX_LENGTH];
+
+    char host_ip[MAX_LENGTH];
+    char file[MAX_LENGTH];
 } Url;
 
 #endif

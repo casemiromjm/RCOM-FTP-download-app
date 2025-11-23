@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "utils.h"
+
 int parse(char *raw_url, Url *url) {
 
     // pointer to update curr url element while preserving original string
@@ -32,7 +34,17 @@ int parse(char *raw_url, Url *url) {
         strcpy(url->password, "password");
     }
 
-        
-    
+    char *slash = strchr(ptr, '/');
+    strncpy(url->hostname, ptr, slash-ptr);
+    ptr += slash-ptr;   // dont skip the / char, because it can cause problem if the resource is the file itself
+
+    strcpy(url->resource, ptr+1);
+
+    if (getHostIp(url) != 0) return -1;
+
+    // creates a pointer to the last occurence of /, then copies the file name to url struct
+    char *f = strrchr(ptr, '/');
+    strcpy(url->file, f+1);
+
     return 0;
 }
