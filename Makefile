@@ -5,16 +5,27 @@ SRC = src
 INCLUDE = include
 BIN = bin
 
+# URL for debugging
+URL1 = ftp://ftp.up.pt/pub/gnu/emacs/elisp-manual-21-2.8.tar.gz
+URL2 = ftp://demo:password@test.rebex.net/readme.txt
+URL3 = ftp://anonymous:anonymous@ftp.bit.nl/speedtest/100mb.bin
+
 .PHONY: all
 all: main
 
-main: $(SRC)/$(wildcard *)
-	$(CC) $(CFLAGS) -o $(BIN)/$@ $^
+main: $(SRC)/*.c
+	$(CC) $(CFLAGS) -o $(BIN)/download $^
 
-.PHONY: run_client
-run_client: $(BIN)/main
-	./$(BIN)/main
+# simple command for easier debugging
+.PHONY: run_client_debug
+run_client_debug: $(BIN)/download
+	@echo "Testing 1st case"
+	./$(BIN)/download $(URL1)
+	@echo "Testing 2nd case"
+	./$(BIN)/download $(URL2)
+	@echo "Testing 3rd case"
+	./$(BIN)/download $(URL3)
 
 .PHONY: clean
 clean:
-	rm -rf $(BIN)/main
+	rm -rf $(BIN)/download
