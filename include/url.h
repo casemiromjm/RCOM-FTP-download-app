@@ -3,6 +3,9 @@
 
 #define MAX_LENGTH 500
 
+/**
+ * Struct for storing a parsed url
+ */
 typedef struct Url {
     char user[MAX_LENGTH];
     char password[MAX_LENGTH];

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "parser.h"
+#include "connection.h"
 
 Url url;
 
@@ -32,7 +33,12 @@ int main(int argc, char *argv[]) {
             url.password,
             url.resource,
             url.file
-        );
+    );
+
+    if (open_connection(url) != 0) {
+        printf("Error open the connection\n");
+        return -1;
+    }
 
     return 0;
 }
