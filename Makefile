@@ -6,7 +6,8 @@ INCLUDE = include
 BIN = bin
 
 # URL for debugging
-URL1 = ftp://ftp.up.pt/pub/gnu/emacs/elisp-manual-21-2.8.tar.gz
+#URL1 = ftp://ftp.up.pt/pub/gnu/emacs/elisp-manual-21-2.8.tar.gz
+URL1 = ftp://ftp.up.pt/pub/debian/README.html
 URL2 = ftp://demo:password@test.rebex.net/readme.txt
 URL3 = ftp://anonymous:anonymous@ftp.bit.nl/speedtest/100mb.bin
 
