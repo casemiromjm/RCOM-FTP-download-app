@@ -33,3 +33,6 @@ run_client_debug: main
 .PHONY: clean
 clean:
 	rm -rf $(BIN)/download
+	rm -rf 100mb.bin
+	rm -rf readme.txt
+	rm -rf README.html
