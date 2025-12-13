@@ -38,7 +38,7 @@ int parse(char *raw_url, Url *url) {
     strncpy(url->hostname, ptr, slash-ptr);
     ptr += slash-ptr;   // dont skip the / char, because it can cause problem if the resource is the file itself
 
-    strcpy(url->resource, ptr+1);
+    strcpy(url->resource, ptr);
 
     if (getHostIp(url) != 0) return -1;
 
