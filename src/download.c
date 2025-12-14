@@ -422,9 +422,10 @@ int main(int argc, char *argv[]) {
     size_t total_bytes = 0;
     while (total_bytes < file_size) {
         bytes = recv(data_socket, buf, MAX_BUF_SIZE, 0);
-        if (bytes > 0)
-            printf("Bytes read %ld\n", bytes);
-            // 1==1;
+        if (bytes > 0) {
+            //printf("Bytes read %ld\n", bytes);
+            // comment out for a cleaner download process
+        }
         else {
             perror("recv() failed");
             return -1;
