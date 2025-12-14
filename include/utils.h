@@ -9,4 +9,11 @@
  */
 int getHostIp(Url *url);
 
+/**
+ * Creates a socket and connects it
+ * @param sock Socket created
+ * @return 0 if OK, -1 otherwise
+ */
+int create_socket(Url url, int *sock);
+
 #endif

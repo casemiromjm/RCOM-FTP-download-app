@@ -12,8 +12,7 @@
 #include <assert.h>
 
 #include "parser.h"
-
-Url url;
+#include "connection.h"
 
 void bytedump(char* buf) {
     while (*buf != '\0') 
@@ -208,6 +207,9 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    Url url;
+    Conn conn;
+
     if (parse(argv[1], &url) != 0) {
         printf("Error parsing url\n");
         return -1;
@@ -226,63 +228,41 @@ int main(int argc, char *argv[]) {
             url.password,
             url.resource,
             url.file
-        );
-    
-    int sockfd;
-    struct sockaddr_in server_addr;
-    size_t bytes;
+    );
 
-    /*server address handling*/
-    bzero((char *) &server_addr, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr(url.host_ip);    /*32 bit Internet address network byte ordered*/
-    server_addr.sin_port = htons(21);        /*server TCP port must be network byte ordered */
-
-    /*open a TCP socket*/
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        perror("socket()");
-        exit(-1);
-    }
-    /*connect to the server*/
-    if (connect(sockfd,
-                (struct sockaddr *) &server_addr,
-                sizeof(server_addr)) < 0) {
-        perror("connect()");
-        exit(-1);
-    }
-    
+    connection_init(url, &conn);
 
     char buf[10000];
     // get welcome message
-    get_message(sockfd, buf, 10000);
+    get_message(conn.ctrl_sock, buf, 10000);
     printf("%s\n", buf);
     
     // send USER message
     sprintf(buf, "USER %s\r\n", url.user);
-    send_message(sockfd, buf, strlen(buf));
+    send_message(conn.ctrl_sock, buf, strlen(buf));
     // receive 331 (request for password)
-    get_message(sockfd, buf, 10000);
+    get_message(conn.ctrl_sock, buf, 10000);
     printf("%s\n", buf);
     
     // send PASS message
     sprintf(buf, "PASS %s\r\n", url.password);
-    send_message(sockfd, buf, strlen(buf));
+    send_message(conn.ctrl_sock, buf, strlen(buf));
     // receive 230 (login successful)
-    get_message(sockfd, buf, 10000);
+    get_message(conn.ctrl_sock, buf, 10000);
     printf("%s\n", buf);
 
     // send TYPE message (switching to binary mode)
     sprintf(buf, "TYPE I\r\n");
-    send_message(sockfd, buf, strlen(buf));
+    send_message(conn.ctrl_sock, buf, strlen(buf));
     // receive 200 (switched to binary mode)
-    get_message(sockfd, buf, 10000);
+    get_message(conn.ctrl_sock, buf, 10000);
     printf("%s\n", buf);
 
     // send SIZE message
     sprintf(buf, "SIZE %s\r\n", url.resource);
-    send_message(sockfd, buf, strlen(buf));
+    send_message(conn.ctrl_sock, buf, strlen(buf));
     // receive 213 (file size in bytes)
-    get_message(sockfd, buf, 10000);
+    get_message(conn.ctrl_sock, buf, 10000);
     printf("%s\n", buf);
     // parse the file size
     size_t file_size = parse_size(buf);
@@ -290,9 +270,9 @@ int main(int argc, char *argv[]) {
     
     // send PASV message
     sprintf(buf, "PASV\r\n");
-    send_message(sockfd, buf, strlen(buf));
+    send_message(conn.ctrl_sock, buf, strlen(buf));
     // receive 227 (passive mode entered, plus the new address)
-    get_message(sockfd, buf, 10000);
+    get_message(conn.ctrl_sock, buf, 10000);
     printf("%s\n", buf);
 
     // compute the new address
