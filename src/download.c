@@ -17,11 +17,18 @@
 #define FTP_PORT 21
 #define MAX_BUF_SIZE 10000
 
-// TODO: this is kinda terrible, idk
+/**
+ * Checks if the message was complete
+ * @param buf Buffer where the message is stored
+ * @param buf_size Buffer size
+ * @return true if complete, false otherwise
+ */
 bool is_msg_complete(const char* buf, int buf_size) {
     int i = 0;
     bool final_line = false;
-    while(true) {
+
+    while(i+1 < buf_size) {
+        // buffer safety check
         if (i+4 >= buf_size && !final_line)
             return false;
         
@@ -32,11 +39,9 @@ bool is_msg_complete(const char* buf, int buf_size) {
             final_line = true;
         }
 
-        if (i+1 >= buf_size)
-            return false;
-
-        if (final_line && buf[i] == '\r' && buf[i+1] == '\n')
+        if (final_line && buf[i] == '\r' && buf[i+1] == '\n') {
             return true;
+        }
 
         i++;
     }
@@ -47,7 +52,7 @@ bool is_msg_complete(const char* buf, int buf_size) {
 /**
  * Reads message pieces and writes them to buf until CRLF is encountered
  * @param socket Socket being read
- * @param buf Where the message is stored
+ * @param buf Buffer where the message is stored
  * @param buf_size Buffer size
  * @return the response code or -1 if something's wrong (e.g. buffer too small)
  */
@@ -65,6 +70,7 @@ int get_message(int socket, char* buf, int buf_size) {
         }
 
         total_bytes += bytes;
+        
         if (is_msg_complete(buf, total_bytes)) {
             break;
         }
@@ -166,7 +172,7 @@ int parse_ip(const char* buf, char* ip) {
             ip_index++;
         }
     }
-    
+
     assert(*buf == ',');
     ip[ip_index] = '.';
     buf++;
