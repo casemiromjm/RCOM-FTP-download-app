@@ -24,10 +24,12 @@ int parse(char *raw_url, Url *url) {
 
         // get user
         strncpy(url->user, ptr, colon-ptr);
+        url->user[colon-ptr] = '\0';
         ptr += colon-ptr+1;
         
         // get password
         strncpy(url->password, ptr, at-ptr);
+        url->user[at-ptr] = '\0';
         ptr += at-ptr+1;
     } else {
         strcpy(url->user, "anonymous");
@@ -36,6 +38,7 @@ int parse(char *raw_url, Url *url) {
 
     char *slash = strchr(ptr, '/');
     strncpy(url->hostname, ptr, slash-ptr);
+    url->hostname[slash-ptr] = '\0';
     ptr += slash-ptr;   // dont skip the / char, because it can cause problem if the resource is the file itself
 
     strcpy(url->resource, ptr);
